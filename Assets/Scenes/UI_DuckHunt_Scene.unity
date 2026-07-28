@@ -405,7 +405,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 150977775}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -414,7 +414,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1374, y: 649}
+  m_AnchoredPosition: {x: 1374.0005, y: 649.00085}
   m_SizeDelta: {x: 348.3, y: 314.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!61 &150977777
@@ -1687,7 +1687,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -1122.7551, y: 473.10443}
+  m_Offset: {x: -1122.3658, y: 473.10443}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1697,7 +1697,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1528.203, y: 1179.6566}
+  m_Size: {x: 1614.3718, y: 1179.6566}
   m_EdgeRadius: 0
 --- !u!1 &1043280363
 GameObject:
@@ -1932,12 +1932,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 894994995}
+  - {fileID: 150977776}
   - {fileID: 833151158}
   - {fileID: 1766565858}
   - {fileID: 486833992}
   - {fileID: 759494461}
   - {fileID: 1283368924}
-  - {fileID: 150977776}
   - {fileID: 1045901056}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
