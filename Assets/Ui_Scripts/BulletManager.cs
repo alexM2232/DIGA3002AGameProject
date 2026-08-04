@@ -3,40 +3,47 @@ using UnityEngine.UI;
 
 public class BulletManager : MonoBehaviour
 {
-    public Image[] bulletIcons; // assign BulletIcon1–3 in Inspector
-    public int BulletsLeft { get; private set; }
+    public Image[] bulletIcons;   // assign bullet UI images in Inspector
+    public int bulletsPerRound = 3;
+    private int bulletsRemaining;
 
     void Start()
     {
         ResetBullets();
     }
 
-    public void Shoot(bool hitDuck)
+    public void ResetBullets()
     {
-        if (BulletsLeft > 0)
+        bulletsRemaining = bulletsPerRound;
+        for (int i = 0; i < bulletIcons.Length; i++)
         {
-            BulletsLeft--;
-            bulletIcons[BulletsLeft].enabled = false;
-
-            if (hitDuck)
-            {
-                // Reset bullets back to 3 after a successful hit
-                ResetBullets();
-            }
-        }
-        else
-        {
-            // No bullets left → bird flew away
-            FindObjectOfType<UIManager>().ShowBirdEscaped();
+            bulletIcons[i].color = Color.white; // reset all bullets to white
         }
     }
 
-    public void ResetBullets()
+    public void Shoot(bool hit)
     {
-        BulletsLeft = bulletIcons.Length;
-        foreach (Image icon in bulletIcons)
+        if (bulletsRemaining <= 0) return;
+
+        // mark the current bullet as used
+        bulletIcons[bulletsPerRound - bulletsRemaining].color = Color.gray;
+        bulletsRemaining--;
+
+        if (bulletsRemaining <= 0 && !hit)
         {
-            icon.enabled = true;
+            // Duck disappears immediately
+            Duck duck = FindObjectOfType<Duck>();
+            if (duck != null) Destroy(duck.gameObject);
+
+            // Show escape panel + dog laugh
+            UIManager ui = FindObjectOfType<UIManager>();
+            ui.ShowBirdEscaped();
+
+            FindObjectOfType<DuckManager>().DuckEscaped();
+            FindObjectOfType<DogManager>().ShowDogLaugh();
+
+            // End attempt immediately
+            FindObjectOfType<GameManager>().EndDuckAttempt();
         }
     }
 }

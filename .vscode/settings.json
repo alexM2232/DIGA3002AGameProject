@@ -66,5 +66,5 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj"
     },
-    "dotnet.defaultSolution": "DIGA3002AGameProject.sln"
+    "dotnet.defaultSolution": "DIGA3002AGameProject.slnx"
 }

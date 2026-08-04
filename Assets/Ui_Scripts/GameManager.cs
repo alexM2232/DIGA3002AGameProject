@@ -1,50 +1,53 @@
 using UnityEngine;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
+    public DuckSpawner duckSpawner;
     public BulletManager bulletManager;
     public DuckManager duckManager;
-    public UIManager uiManager;
+    public DogManager dogManager;
 
-    public int currentRound = 1;
-    public int totalRounds = 3;
-    public int ducksRequiredToWin = 3;
+    private int ducksSpawned = 0;
+    private int totalDucks = 10;
+    private bool duckActive = false;
+    private bool attemptFinished = false;
 
-    void Update()
+    void Start()
     {
-        // End round when bullets run out or all ducks are shot
-        if (bulletManager.BulletsLeft == 0 || duckManager.DucksShot == duckManager.TotalDucks)
+        SpawnNextDuck();
+    }
+
+    public void SpawnNextDuck()
+    {
+        if (ducksSpawned < totalDucks && !duckActive)
         {
-            EndRound();
+            StartCoroutine(SpawnDuckWithDelay());
+        }
+        else if (ducksSpawned >= totalDucks)
+        {
+            Debug.Log("All ducks attempted!");
+            // TODO: Final results panel
         }
     }
 
-    void EndRound()
+    private IEnumerator SpawnDuckWithDelay()
     {
-        if (duckManager.DucksShot >= ducksRequiredToWin)
-        {
-            uiManager.ShowRoundResult(true); // win
-        }
-        else
-        {
-            uiManager.ShowRoundResult(false); // lose
-        }
-
-        Invoke("NextRound", 2f);
+        yield return new WaitForSeconds(2f); // breathing room
+        attemptFinished = false;
+        duckSpawner.SpawnSingleDuck();
+        bulletManager.ResetBullets(); // reload only at start of round
+        ducksSpawned++;
+        duckActive = true;
     }
 
-    void NextRound()
+    public void EndDuckAttempt()
     {
-        currentRound++;
-        if (currentRound > totalRounds)
-        {
-            Debug.Log("Game Over!");
-        }
-        else
-        {
-            bulletManager.ResetBullets();
-            duckManager.ResetDucks();
-            uiManager.HideRoundResult();
-        }
+        if (attemptFinished) return; // prevents duplicates
+        attemptFinished = true;
+
+        duckActive = false;
+        SpawnNextDuck();
     }
 }
+
