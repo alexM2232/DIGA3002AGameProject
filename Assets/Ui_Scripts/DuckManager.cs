@@ -3,25 +3,35 @@ using UnityEngine.UI;
 
 public class DuckManager : MonoBehaviour
 {
-    public Image[] duckIcons; // assign DuckPanel1–10 in Inspector
-    public int DucksShot { get; private set; }
+    public Image[] duckIcons;
+    public int DucksAttempted { get; private set; }
     public int TotalDucks => duckIcons.Length;
 
-    public void DuckHit()
+    public void DuckShot()
     {
-        if (DucksShot < duckIcons.Length)
+        if (DucksAttempted < duckIcons.Length)
         {
-            duckIcons[DucksShot].color = Color.red; // tint red
-            DucksShot++;
+            duckIcons[DucksAttempted].color = Color.red; // shot = red
+            DucksAttempted++;
+        }
+    }
+
+    public void DuckEscaped()
+    {
+        if (DucksAttempted < duckIcons.Length)
+        {
+            duckIcons[DucksAttempted].color = Color.gray; // escape = gray
+            DucksAttempted++;
         }
     }
 
     public void ResetDucks()
     {
-        DucksShot = 0;
+        DucksAttempted = 0;
         foreach (Image icon in duckIcons)
         {
-            icon.color = Color.white; // reset to normal
+            icon.color = Color.white;
         }
     }
 }
+
