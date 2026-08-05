@@ -3,13 +3,17 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("References")]
     public DuckSpawner duckSpawner;
     public BulletManager bulletManager;
     public DuckManager duckManager;
     public DogManager dogManager;
+    public UIManager uiManager;
+
+    [Header("Settings")]
+    public int totalDucks = 10;
 
     private int ducksSpawned = 0;
-    private int totalDucks = 10;
     private bool duckActive = false;
     private bool attemptFinished = false;
 
@@ -27,27 +31,65 @@ public class GameManager : MonoBehaviour
         else if (ducksSpawned >= totalDucks)
         {
             Debug.Log("All ducks attempted!");
-            // TODO: Final results panel
+
+            // ✅ Panel fix: use StartMenuController instead of UIManager
+            StartMenuController menuController = FindObjectOfType<StartMenuController>();
+
+            if (duckManager.DucksShot == totalDucks)
+            {
+                menuController.EndGame(true);   // Show WinPanel
+            }
+            else
+            {
+                menuController.EndGame(false);  // Show LosePanel
+            }
         }
     }
 
     private IEnumerator SpawnDuckWithDelay()
     {
-        yield return new WaitForSeconds(2f); // breathing room
+        yield return new WaitForSeconds(2f);
+
         attemptFinished = false;
-        duckSpawner.SpawnSingleDuck();
-        bulletManager.ResetBullets(); // reload only at start of round
-        ducksSpawned++;
         duckActive = true;
+
+        duckSpawner.SpawnSingleDuck();
+        bulletManager.ResetBullets();
+        uiManager.ResetPanels();
+
+        ducksSpawned++;
     }
 
     public void EndDuckAttempt()
     {
-        if (attemptFinished) return; // prevents duplicates
+        if (attemptFinished) return;
         attemptFinished = true;
 
         duckActive = false;
         SpawnNextDuck();
     }
-}
 
+    public void DuckEscaped()
+    {
+        if (attemptFinished) return;
+
+        uiManager.ShowBirdEscaped();
+        uiManager.MarkDuckEscaped();
+        duckManager.DuckEscaped();
+        dogManager.ShowDogLaugh();
+
+        EndDuckAttempt();
+    }
+
+    public void DuckShot()
+    {
+        if (attemptFinished) return;
+
+        uiManager.ShowRoundResult(true);
+        uiManager.MarkDuckShot();
+        duckManager.DuckShot();
+        dogManager.ShowDogWithDuck();
+
+        EndDuckAttempt();
+    }
+}

@@ -10,7 +10,7 @@ public class DuckMovement : MonoBehaviour
     void Start()
     {
         goingUp = true;
-        goingLeft = Random.value > 0.5f; // choose left or right
+        goingLeft = Random.value > 0.5f;
     }
 
     void Update()
@@ -18,7 +18,6 @@ public class DuckMovement : MonoBehaviour
         if (goingUp)
         {
             transform.Translate(Vector2.up * verticalSpeed * Time.deltaTime);
-
             if (transform.position.y > 3f) goingUp = false;
         }
         else
@@ -29,16 +28,8 @@ public class DuckMovement : MonoBehaviour
 
         if (transform.position.x < -10 || transform.position.x > 10 || transform.position.y > 6)
         {
-            UIManager ui = FindObjectOfType<UIManager>();
-            ui.ShowBirdEscaped();
-
-            FindObjectOfType<DuckManager>().DuckEscaped();
-            FindObjectOfType<DogManager>().ShowDogLaugh();
-
+            FindObjectOfType<GameManager>().DuckEscaped();
             Destroy(gameObject);
-            FindObjectOfType<GameManager>().EndDuckAttempt();
         }
     }
 }
-
-

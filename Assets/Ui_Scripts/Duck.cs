@@ -4,35 +4,32 @@ public class Duck : MonoBehaviour
 {
     private bool isHit = false;
 
+    [Header("Audio")]
+    public AudioSource duckHitAudio; // 🎵 assign in prefab
+
     void OnMouseDown()
     {
         if (isHit) return;
         isHit = true;
 
-        FindObjectOfType<DuckManager>().DuckShot(); // red icon
-        FindObjectOfType<BulletManager>().Shoot(true);
+        // Play duck hit sound
+        if (duckHitAudio != null)
+        {
+            duckHitAudio.Play();
+        }
 
-        UIManager ui = FindObjectOfType<UIManager>();
-        ui.ShowRoundResult(true);
+        FindObjectOfType<GameManager>().DuckShot();
 
-        FindObjectOfType<DogManager>().ShowDogWithDuck(); // placeholder
-
-        Destroy(gameObject);
-        FindObjectOfType<GameManager>().EndDuckAttempt();
+        // Delay destroy slightly so sound can play
+        Destroy(gameObject, 0.2f);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("EscapeZone"))
         {
-            FindObjectOfType<DuckManager>().DuckEscaped(); // gray icon
-            UIManager ui = FindObjectOfType<UIManager>();
-            ui.ShowBirdEscaped();
-
-            FindObjectOfType<DogManager>().ShowDogLaugh(); // placeholder
-
+            FindObjectOfType<GameManager>().DuckEscaped();
             Destroy(gameObject);
-            FindObjectOfType<GameManager>().EndDuckAttempt();
         }
     }
 }

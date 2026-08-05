@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour
+public class StartMenuController : MonoBehaviour
 {
     [Header("Main Menu Buttons")]
     public GameObject playButton;
@@ -14,23 +14,43 @@ public class MainMenu : MonoBehaviour
     [Header("Pause Menu")]
     public GameObject pauseMenu;
 
-    [Header("Win Menu")]
-    public GameObject winPanel;   // ✅ Drag your WinPanel UI here in Inspector
+    [Header("End Panels")]
+    public GameObject winPanel;
+    public GameObject losePanel;
+
+    [Header("End Panel Buttons")]
+    public GameObject retryButton;
+    public GameObject mainMenuButton;
+
+    [Header("Audio")]
+    public AudioSource mainMenuMusic;
+    public AudioSource endGameMusic;
 
     private bool isPaused = false;
 
     void Start()
     {
-        
-
         if (settingsMenue != null) settingsMenue.SetActive(false);
         if (pauseMenu != null) pauseMenu.SetActive(false);
-        if (winPanel != null) winPanel.SetActive(false); // hide win panel at start
+        if (winPanel != null) winPanel.SetActive(false);
+        if (losePanel != null) losePanel.SetActive(false);
+
+        if (retryButton != null) retryButton.SetActive(false);
+        if (mainMenuButton != null) mainMenuButton.SetActive(false);
+
+        // 🎵 Play main menu music only in Main Menu scene
+        if (SceneManager.GetActiveScene().name == "Main Menu")
+        {
+            if (mainMenuMusic != null && !mainMenuMusic.isPlaying)
+            {
+                mainMenuMusic.loop = true;
+                mainMenuMusic.Play();
+            }
+        }
     }
 
     void Update()
     {
-        // ESC toggles pause menu
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!isPaused)
@@ -43,31 +63,24 @@ public class MainMenu : MonoBehaviour
     // === Main Menu Methods ===
     public void Play()
     {
-       
-        SceneManager.LoadScene("UI_DuckHunt_Scene");
-        Debug.Log("Player selects play to enter game");
+        SceneManager.LoadScene("DuckHuntFinal");
     }
 
     public void Settings()
     {
-        
         ToggleMainMenuButtons(false);
         if (settingsMenue != null) settingsMenue.SetActive(true);
-        Debug.Log("Settings button pressed - showing Settings menu");
     }
 
     public void Back()
     {
-        
         ToggleMainMenuButtons(true);
         if (settingsMenue != null) settingsMenue.SetActive(false);
-        Debug.Log("Back button pressed - restoring main menu");
     }
 
     public void Quit()
     {
         Application.Quit();
-        Debug.Log("Player has quit the game");
     }
 
     private void ToggleMainMenuButtons(bool state)
@@ -80,7 +93,6 @@ public class MainMenu : MonoBehaviour
     // === Pause Menu Methods ===
     public void ShowPauseMenu()
     {
-    
         if (pauseMenu != null) pauseMenu.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
@@ -94,45 +106,59 @@ public class MainMenu : MonoBehaviour
         if (settingsMenue != null) settingsMenue.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
-         Cursor.lockState = CursorLockMode.Locked;
-         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-    public void PauseSettings()
+    // === End Game Methods ===
+    public void EndGame(bool playerWon)
     {
-        if (settingsMenue != null) settingsMenue.SetActive(true);
-        if (pauseMenu != null) pauseMenu.SetActive(false);
-    }
-
-    public void PauseBack()
-    {
-        if (settingsMenue != null) settingsMenue.SetActive(false);
-        if (pauseMenu != null) pauseMenu.SetActive(true);
-    }
-
-    // === Win Methods ===
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        if (playerWon)
         {
-            Debug.Log(">>> Player reached FinalGround - triggering WinPanel");
-            WinGame();
+            ShowEndPanel(winPanel);
+        }
+        else
+        {
+            ShowEndPanel(losePanel);
+        }
+
+        // 🎶 Play end‑game music
+        if (endGameMusic != null)
+        {
+            endGameMusic.loop = false;
+            endGameMusic.Play();
+        }
+
+        // Stop main menu music if still playing
+        if (mainMenuMusic != null && mainMenuMusic.isPlaying)
+        {
+            mainMenuMusic.Stop();
         }
     }
 
-    public void WinGame()
+    private void ShowEndPanel(GameObject panel)
     {
-        if (winPanel != null) winPanel.SetActive(true);
+        if (panel == null) return;
 
-        Time.timeScale = 0f; // freeze gameplay
+        panel.SetActive(true);
+
+        if (retryButton != null) retryButton.SetActive(true);
+        if (mainMenuButton != null) mainMenuButton.SetActive(true);
+
+        Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+    }
 
+    public void RetryGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("Main Menu");
     }
 }
